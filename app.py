@@ -42,13 +42,15 @@ def image_to_text(image):
         return result["ParsedResults"][0]["ParsedText"].strip()
     return "Error: Unable to extract text."
 
+# Set page configuration
+st.set_page_config(page_title="🔍Glass-Media", layout="wide")
 
+# Custom header with branding
+st.markdown("<h1 style='text-align: center;'>🕵️ Glass-Media</h1>", unsafe_allow_html=True)
+st.markdown("<h3 style='text-align: center; color: gray;'>Misinformation Detection and Fact-Checking</h3>", unsafe_allow_html=True)
+st.markdown("<p style='text-align: center; font-style: italic;'>Let's make media as clear as glass! 🏆</p>", unsafe_allow_html=True)
 
-
-
-# Streamlit App UI
-st.set_page_config(page_title="🔍Misinformation Detection", layout="wide")
-st.markdown("# 🕵️ Misinformation Detection and Fact-Checking")
+# Rest of your app code...
 
 uploaded_file = st.file_uploader("Upload an image for text extraction", type=["png", "jpg", "jpeg"])
 user_input = ""
