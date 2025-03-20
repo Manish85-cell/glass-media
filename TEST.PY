@@ -1,3 +1,5 @@
+from googletrans import Translator
+import googletrans
 import streamlit as st
 import requests
 from transformers import BertTokenizer, BertForSequenceClassification
@@ -7,9 +9,6 @@ from sentence_transformers import SentenceTransformer
 from sklearn.metrics.pairwise import cosine_similarity
 from PIL import Image
 import io
-import googletrans
-from googletrans import Translator
-import google.generativeai as genai
 
 # API_URL = "https://fakenewsfilter.onrender.com/predict"
 
@@ -44,8 +43,14 @@ def image_to_text(image):
     if result["OCRExitCode"] == 1:
         return result["ParsedResults"][0]["ParsedText"].strip()
     return "Error: Unable to extract text."
+def translate_text(text, target_lang="en"):
+    translator = Translator()
+    detected_lang = translator.detect(text).lang
+    if detected_lang == "hi":  # If the text is in Hindi
+        translated_text = translator.translate(text, dest=target_lang).text
+        return translated_text, detected_lang
+    return text, detected_lang  # Return original if not Hindi
 
-# Set page configuration
 st.set_page_config(page_title="🔍Glass-Media", layout="wide")
 
 # Custom header with branding
@@ -53,10 +58,10 @@ st.markdown("<h1 style='text-align: center;'>🕵️ Glass-Media</h1>", unsafe_a
 st.markdown("<h3 style='text-align: center; color: gray;'>Misinformation Detection and Fact-Checking</h3>", unsafe_allow_html=True)
 st.markdown("<p style='text-align: center; font-style: italic;'>Let's make media as clear as glass! 🏆</p>", unsafe_allow_html=True)
 
-# Rest of your app code...
 
 uploaded_file = st.file_uploader("Upload an image for text extraction", type=["png", "jpg", "jpeg"])
 user_input = ""
+
 if uploaded_file:
     image = Image.open(uploaded_file)
     st.image(image, caption="Uploaded Image", use_container_width=True)
@@ -66,13 +71,6 @@ if uploaded_file:
     user_input = extracted_text
 else:
     user_input = st.text_area("Enter text to check", placeholder="Type or paste text to analyze...", height=200)
-def translate_text(text, target_lang="en"):
-    translator = Translator()
-    detected_lang = translator.detect(text).lang
-    if detected_lang == "hi":  # If the text is in Hindi
-        translated_text = translator.translate(text, dest=target_lang).text
-        return translated_text, detected_lang
-    return text, detected_lang  # Return original if not Hindi
 
 if user_input:
     translated_text, detected_lang = translate_text(user_input)
@@ -83,21 +81,18 @@ if user_input:
     else:
         translated_text = user_input  # Use original if not Hindi
 
-
 if st.button("Check News"):
-    if user_input:
+    if translated_text:
         with st.spinner("Analyzing news..."):
-            prediction = predict_misinformation(user_input)
+            prediction = predict_misinformation(translated_text)
             if prediction == 1:
                 st.success("This news is real.")
             else:
                 st.error("This news is fake.")
     else:
         st.warning("Please enter some text or upload an image.")
-# import wikipediaapi
-# import streamlit as st
 
-# Initialize Gemini API
+import google.generativeai as genai
 genai.configure(api_key="AIzaSyA9UeawwH7VaaViDk3QUIUJXxoet6w7-GI")
 
 
@@ -135,7 +130,7 @@ if st.button("Check Facts"):
 
 with st.expander("ℹ️ How to Use"):
     st.write("""
-        - Enter the text(English or Hindi) or upload image you want to verify.
+        - Enter the text or upload image you want to verify.
         - Click the appropriate button to check for misinformation or fact-check.
         - News-check AI will categorize it as **Real or Fake**.
         - Fact-check AI will verify and categorize it as **True, False, Likely True, or Likely False**.

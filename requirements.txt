@@ -12,3 +12,4 @@ sentence-transformers==3.4.0
 google-api-python-client==2.160.0
 requests==2.32.3
 google-generativeai
+googletrans==4.0.0-rc1
