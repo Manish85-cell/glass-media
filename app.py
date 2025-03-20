@@ -73,7 +73,7 @@ if st.button("Check News"):
     else:
         st.warning("Please enter some text or upload an image.")
 import google.generativeai as genai
-import wikipediaapi
+# import wikipediaapi
 # import streamlit as st
 
 # Initialize Gemini API
