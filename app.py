@@ -18,8 +18,8 @@ API_KEY = 'AIzaSyAsJyPU-W-IiNm525tyzdakLkFi0uXAdIY'
 service = build('kgsearch', 'v1', developerKey=API_KEY)
 OCR_API_KEY = "K89917156688957"  # Replace with your OCRSpace API Key
 
-misinfo_model = BertForSequenceClassification.from_pretrained("checkpoint-3321")
-misinfo_tokenizer = BertTokenizer.from_pretrained("checkpoint-3321")
+misinfo_model = BertForSequenceClassification.from_pretrained("../glass-media/checkpoint-3321")
+misinfo_tokenizer = BertTokenizer.from_pretrained("../glass-media/checkpoint-3321")
 
 # Example Usage
 
@@ -61,8 +61,8 @@ if uploaded_file:
     image = Image.open(uploaded_file)
     st.image(image, caption="Uploaded Image", use_container_width=True)
     extracted_text = image_to_text(image)
-    st.subheader("Extracted Text")
-    st.write(extracted_text)
+    # st.subheader("Extracted Text")
+    # st.write(extracted_text)
     user_input = extracted_text
 else:
     user_input = st.text_area("Enter text to check", placeholder="Type or paste text to analyze...", height=200)
@@ -74,31 +74,38 @@ def translate_text(text, target_lang="en"):
         return translated_text, detected_lang
     return text, detected_lang  # Return original if not Hindi
 
+# --- Function to Classify Input (News or Fact) ---
+def classify_input(text):
+    model = genai.GenerativeModel("gemini-1.5-pro-latest")
+    response = model.generate_content(f"Classify this input as either 'news' or 'fact' without any explanation just single word news or fact: {text}")
+    return response.text.strip().lower()
+
+
 if user_input:
     translated_text, detected_lang = translate_text(user_input)
 
-    if detected_lang == "hi":
-        # st.subheader("Translated Text (Hindi → English)")
-        st.write(translated_text)
-    else:
-        translated_text = user_input  # Use original if not Hindi
+    # if detected_lang == "hi":
+    #     # st.subheader("Translated Text (Hindi → English)")
+    #     st.write(translated_text)
+    # else:
+    translated_text = user_input  # Use original if not Hindi
+    
 
-
-if st.button("Check News"):
-    if user_input:
-        with st.spinner("Analyzing news..."):
-            prediction = predict_misinformation(user_input)
-            if prediction == 1:
-                st.success("This news is real.")
-            else:
-                st.error("This news is fake.")
-    else:
-        st.warning("Please enter some text or upload an image.")
+# if st.button("Check News"):
+#     if user_input:
+#         with st.spinner("Analyzing news..."):
+#             prediction = predict_misinformation(user_input)
+#             if prediction == 1:
+#                 st.success("This news is real.")
+#             else:
+#                 st.error("This news is fake.")
+#     else:
+#         st.warning("Please enter some text or upload an image.")
 # import wikipediaapi
 # import streamlit as st
 
 # Initialize Gemini API
-genai.configure(api_key="AIzaSyA9UeawwH7VaaViDk3QUIUJXxoet6w7-GI")
+genai.configure(api_key="AIzaSyAVhKz4vmj_0Tmth-qgjK5J76W8GOPg6Kc")
 
 
 
@@ -125,13 +132,26 @@ def get_fact_check_verification(user_statement):
     response = model.generate_content(prompt)
     return response.text.strip()
 
-if st.button("Check Facts"):
-    if user_input:
-        with st.spinner("Fact-checking..."):
-            result = get_fact_check_verification(user_input)
-            st.markdown(f"### **Result:** {result}")
+if st.button("Check"):
+    with st.spinner("🔎 Classifying input..."):
+        input_type = classify_input(translated_text)
+
+    st.subheader(f"📌 Classification: **{input_type.capitalize()}**")
+
+    # --- Check Misinformation or Fact ---
+    if input_type == "news":
+        with st.spinner("📰 Analyzing news for misinformation..."):
+            prediction = predict_misinformation(translated_text)
+            if prediction == 1:
+                st.success("✅ This news is **REAL**.")
+            else:
+                st.error("❌ This news is **FAKE**.")
+    elif input_type == "fact":
+        with st.spinner("🔍 Fact-checking statement..."):
+            fact_check_result = get_fact_check_verification(translated_text)
+            st.markdown(f"### **🧐 Fact-Check Result:** {fact_check_result}")
     else:
-        st.warning("Please enter a statement.")
+        st.warning("⚠️ Unable to classify the input. Try again.")
 
 with st.expander("ℹ️ How to Use"):
     st.write("""
@@ -140,4 +160,3 @@ with st.expander("ℹ️ How to Use"):
         - News-check AI will categorize it as **Real or Fake**.
         - Fact-check AI will verify and categorize it as **True, False, Likely True, or Likely False**.
     """)
-
