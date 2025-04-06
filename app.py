@@ -13,7 +13,7 @@ import google.generativeai as genai
 
 # API_URL = "https://fakenewsfilter.onrender.com/predict"
 
-embedder = SentenceTransformer('all-MiniLM-L6-v2')
+# embedder = SentenceTransformer('all-MiniLM-L6-v2')
 API_KEY = 'AIzaSyAsJyPU-W-IiNm525tyzdakLkFi0uXAdIY'
 service = build('kgsearch', 'v1', developerKey=API_KEY)
 OCR_API_KEY = "K89917156688957"  # Replace with your OCRSpace API Key
