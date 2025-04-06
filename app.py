@@ -156,7 +156,4 @@ if st.button("Check"):
 with st.expander("ℹ️ How to Use"):
     st.write("""
         - Enter the text(English or Hindi) or upload image you want to verify.
-        - Click the appropriate button to check for misinformation or fact-check.
-        - News-check AI will categorize it as **Real or Fake**.
-        - Fact-check AI will verify and categorize it as **True, False, Likely True, or Likely False**.
-    """)
+        """)
