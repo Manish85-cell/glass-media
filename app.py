@@ -105,7 +105,7 @@ if user_input:
 # import streamlit as st
 
 # Initialize Gemini API
-genai.configure(api_key="AIzaSyAVhKz4vmj_0Tmth-qgjK5J76W8GOPg6Kc")
+genai.configure(api_key="AIzaSyDjaxuQmN8XwuXUwpq1TzYzqUDvBxorAaU")
 
 
 
