@@ -76,7 +76,7 @@ def translate_text(text, target_lang="en"):
 
 # --- Function to Classify Input (News or Fact) ---
 def classify_input(text):
-    model = genai.GenerativeModel("gemini-1.5-pro-latest")
+    model = genai.GenerativeModel("gemini-2.0-flash-lite")
     response = model.generate_content(f"Classify this input as either 'news' or 'fact' without any explanation just single word news or fact: {text}")
     return response.text.strip().lower()
 
@@ -105,7 +105,7 @@ if user_input:
 # import streamlit as st
 
 # Initialize Gemini API
-genai.configure(api_key="AIzaSyDjaxuQmN8XwuXUwpq1TzYzqUDvBxorAaU")
+genai.configure(api_key="AIzaSyA-m2pt91XgayRfAYaV3KFBZ-g6pTdb_BI")
 
 
 
@@ -128,7 +128,7 @@ def get_fact_check_verification(user_statement):
     """
 
     # Generate Gemini response
-    model = genai.GenerativeModel("gemini-1.5-pro-latest")
+    model = genai.GenerativeModel("gemini-2.0-flash-lite")
     response = model.generate_content(prompt)
     return response.text.strip()
 
