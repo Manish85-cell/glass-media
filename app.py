@@ -18,8 +18,8 @@ API_KEY = 'AIzaSyAsJyPU-W-IiNm525tyzdakLkFi0uXAdIY'
 service = build('kgsearch', 'v1', developerKey=API_KEY)
 OCR_API_KEY = "K89917156688957"  # Replace with your OCRSpace API Key
 
-misinfo_model = BertForSequenceClassification.from_pretrained("../glass-media/checkpoint-3321")
-misinfo_tokenizer = BertTokenizer.from_pretrained("../glass-media/checkpoint-3321")
+misinfo_model = BertForSequenceClassification.from_pretrained("checkpoint-3321")
+misinfo_tokenizer = BertTokenizer.from_pretrained("checkpoint-3321")
 
 # Example Usage
 
